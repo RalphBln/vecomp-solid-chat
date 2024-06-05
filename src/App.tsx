@@ -18,12 +18,13 @@ import {
     UserStatus
 } from "@chatscope/use-chat";
 import {ExampleChatService} from "@chatscope/use-chat/dist/examples";
-import {Chat} from "./components/Chat";
 import {nanoid} from "nanoid";
 import {Col, Container, Row} from "react-bootstrap";
 import {akaneModel, eliotModel, emilyModel, joeModel, users} from "./data/data";
 import {AutoDraft} from "@chatscope/use-chat/dist/enums/AutoDraft";
 import {Footer} from "./components/Footer";
+import {SessionProvider} from "@inrupt/solid-ui-react";
+import {SolidChatSession} from "./components/SolidChatSession";
 
 // sendMessage and addMessage methods can automagically generate id for messages and groups
 // This allows you to omit doing this manually, but you need to provide a message generator
@@ -108,6 +109,7 @@ function createConversation(id: ConversationId, name: string): Conversation {
     });
 }
 
+
 // Add users and conversations to the states
 chats.forEach(c => {
 
@@ -152,56 +154,20 @@ chats.forEach(c => {
 function App() {
 
     return (
+        <SessionProvider>
         <div className="h-100 d-flex flex-column overflow-hidden">
-            <Container fluid className="p-4 flex-grow-1 position-relative overflow-hidden">
-                <Row className="h-50 pb-2 flex-nowrap">
-                    <Col>
                         <ChatProvider serviceFactory={serviceFactory} storage={akaneStorage} config={{
                             typingThrottleTime: 250,
                             typingDebounceTime: 900,
                             debounceTyping: true,
                             autoDraft: AutoDraft.Save | AutoDraft.Restore
                         }}>
-                            <Chat user={akane}/>
+                            <SolidChatSession user={akane}/>
                         </ChatProvider>
-                    </Col>
-                    <Col>
-                        <ChatProvider serviceFactory={serviceFactory} storage={eliotStorage} config={{
-                            typingThrottleTime: 250,
-                            typingDebounceTime: 900,
-                            debounceTyping: true,
-                            autoDraft: AutoDraft.Save | AutoDraft.Restore
-                        }}>
-                            <Chat user={eliot}/>
-                        </ChatProvider>
-                    </Col>
-                </Row>
-                <Row className="h-50 pt-2 flex-nowrap">
-                    <Col>
-                        <ChatProvider serviceFactory={serviceFactory} storage={emilyStorage} config={{
-                            typingThrottleTime: 250,
-                            typingDebounceTime: 900,
-                            debounceTyping: true,
-                            autoDraft: AutoDraft.Save | AutoDraft.Restore
-                        }}>
-                            <Chat user={emily}/>
-                        </ChatProvider>
-                    </Col>
-                    <Col>
-                        <ChatProvider serviceFactory={serviceFactory} storage={joeStorage} config={{
-                            typingThrottleTime: 250,
-                            typingDebounceTime: 900,
-                            debounceTyping: true,
-                            autoDraft: AutoDraft.Save | AutoDraft.Restore
-                        }}>
-                            <Chat user={joe}/>
-                        </ChatProvider>
-                    </Col>
-                </Row>
-            </Container>
-            <Footer/>
         </div>
+        </SessionProvider>
     );
 }
 
 export default App;
+
