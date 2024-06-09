@@ -2,7 +2,7 @@ import { Chat } from './Chat';
 import { Presence, UserStatus } from "@chatscope/use-chat";
 import { useState, useEffect } from "react";
 import Creatable from 'react-select/creatable';
-import { useSession, useThing, useDataset, LoginButton, LogoutButton, CombinedDataProvider, Image, Text } from "@inrupt/solid-ui-react";
+import { useSession, LoginButton, LogoutButton, CombinedDataProvider } from "@inrupt/solid-ui-react";
 import { 
   getStringNoLocale,
   getUrl,
@@ -45,10 +45,12 @@ export const SolidChatSession = () => {
         console.log("##### Fetching user data from Solid");
         getSolidDataset(webId, { fetch: session.fetch } ).then((profile) => {
           const profileThing = getThing(profile, webId)!;
-          const firstName = getStringNoLocale(profileThing!, FOAF.givenName.iriAsString) as string
+          const firstName = getStringNoLocale(profileThing!, FOAF.givenName.iriAsString) as string;
           const username = firstName;
-          const lastName = getStringNoLocale(profileThing!, FOAF.familyName.iriAsString) as string
-          const avatar = getUrl(profileThing!, VCARD.hasPhoto.iriAsString) as string
+          const lastName = getStringNoLocale(profileThing!, FOAF.familyName.iriAsString) as string;
+          const avatar = getUrl(profileThing!, VCARD.hasPhoto.iriAsString) as string;
+          const location = getStringNoLocale(profileThing!, VCARD.hasCountryName.iriAsString) as string;
+          const age = Number(getStringNoLocale(profileThing!, FOAF.age.iriAsString) as string);
           const loadedUser = new SolidChatUser({
             id: user.id,
             presence: user.presence,
@@ -58,8 +60,8 @@ export const SolidChatSession = () => {
             email: user.email,
             avatar: avatar,
             bio: user.bio,
-            location: user.location,
-            age: user.age
+            location: location,
+            age: age
           });
           setUser(loadedUser);
         });

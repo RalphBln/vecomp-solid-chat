@@ -11,6 +11,7 @@ import {
 } from "@chatscope/use-chat";
 import {MessageContent, TextContent } from "@chatscope/use-chat";
 import { SolidChatUser } from "../SolidChatUser";
+import EditableLabel from 'react-editable-label'; 
 
 export const Chat = ({user}:{user:SolidChatUser}) => {
     
@@ -119,6 +120,24 @@ export const Chat = ({user}:{user:SolidChatUser}) => {
                 <Avatar src={user.avatar} />
                 <ConversationHeader.Content>
                     {user.username}
+                    <div className="cs-conversation__info">
+                    {/* see https://github.com/vercel/next.js/issues/42292 */}
+                    {/* @ts-expect-error Server Component */}
+                    <EditableLabel
+                        initialValue={"" + user.age}
+                        save={value => {
+                            console.log(`Saving '${value}'`);
+                        }}
+                    />,&nbsp;
+                    {/* see https://github.com/vercel/next.js/issues/42292 */}
+                    {/* @ts-expect-error Server Component */}
+                    <EditableLabel
+                        initialValue={user.location}
+                        save={value => {
+                            console.log(`Saving '${value}'`);
+                        }}
+                    />
+                    </div>
                 </ConversationHeader.Content>
             </ConversationHeader>
             <ConversationList>
