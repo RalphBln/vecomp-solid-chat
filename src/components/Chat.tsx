@@ -13,7 +13,7 @@ import {MessageContent, TextContent } from "@chatscope/use-chat";
 import { SolidChatUser } from "../SolidChatUser";
 import EditableLabel from 'react-editable-label'; 
 
-export const Chat = ({user}:{user:SolidChatUser}) => {
+export const Chat = ({user, updateLocation, updateAge}:{user:SolidChatUser, updateLocation:(location: string) => void, updateAge:(age: string) => void}) => {
     
     // Get all chat related values and methods from useChat hook 
     const {
@@ -125,17 +125,14 @@ export const Chat = ({user}:{user:SolidChatUser}) => {
                     {/* @ts-expect-error Server Component */}
                     <EditableLabel
                         initialValue={"" + user.age}
-                        save={value => {
-                            console.log(`Saving '${value}'`);
-                        }}
+                        save={updateAge}
+                        
                     />,&nbsp;
                     {/* see https://github.com/vercel/next.js/issues/42292 */}
                     {/* @ts-expect-error Server Component */}
                     <EditableLabel
                         initialValue={user.location}
-                        save={value => {
-                            console.log(`Saving '${value}'`);
-                        }}
+                        save={updateLocation}
                     />
                     </div>
                 </ConversationHeader.Content>

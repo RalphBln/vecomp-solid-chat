@@ -5,9 +5,13 @@ import Creatable from 'react-select/creatable';
 import { useSession, LoginButton, LogoutButton, CombinedDataProvider } from "@inrupt/solid-ui-react";
 import { 
   getStringNoLocale,
+  setStringNoLocale,
   getUrl,
   getSolidDataset,
-  getThing } from "@inrupt/solid-client";
+  getThing,
+  setThing,
+  Thing,
+  SolidDataset } from "@inrupt/solid-client";
 import { FOAF, VCARD } from "@inrupt/lit-generated-vocab-common";
 import { identityProviderOptions } from './solid-identityproviders';
 import { SolidChatUser } from '../SolidChatUser';
@@ -37,14 +41,18 @@ export const SolidChatSession = () => {
       age: 0
     }));
 
-    const [ solidUserLoaded, setSolidUserLoaded] = useState(false);
+    const [solidProfile, setSolidProfile] = useState<Thing>();
+    const [dataset, setDataset] = useState<SolidDataset>();
+    const [solidUserLoaded, setSolidUserLoaded] = useState(false);
 
     if (session.info.isLoggedIn) {
       if (!solidUserLoaded) {
         setSolidUserLoaded(true);
         console.log("##### Fetching user data from Solid");
-        getSolidDataset(webId, { fetch: session.fetch } ).then((profile) => {
-          const profileThing = getThing(profile, webId)!;
+        getSolidDataset(webId, { fetch: session.fetch } ).then((profileDataset) => {
+          const profileThing = getThing(profileDataset, webId);
+          setDataset(profileDataset);
+          setSolidProfile(profileThing!);
           const firstName = getStringNoLocale(profileThing!, FOAF.givenName.iriAsString) as string;
           const username = firstName;
           const lastName = getStringNoLocale(profileThing!, FOAF.familyName.iriAsString) as string;
@@ -68,12 +76,29 @@ export const SolidChatSession = () => {
       }
     }
 
+    const updateLocation = async (location: string) => {
+      storeToSolidPod(setStringNoLocale(solidProfile!, VCARD.hasCountryName.iriAsString, location));
+    };
+
+    const  updateAge = async (age: string) => {
+      storeToSolidPod(setStringNoLocale(solidProfile!, FOAF.age.iriAsString, age));
+    };
+
+    const storeToSolidPod = async (profile: Thing) => {
+      setSolidProfile(profile);
+      setThing(dataset!, profile)
+    };
+
     return (
         <>
           <h1>Vecomp Chat</h1>
           {session.info.isLoggedIn ? (
             <CombinedDataProvider datasetUrl={webId} thingUrl={webId}>
-            <Chat user={user}/>
+            <Chat
+              user={user}
+              updateLocation={updateLocation}
+              updateAge={updateAge}
+            />
             <LogoutButton />
             </CombinedDataProvider>
         ) : (
