@@ -1,5 +1,5 @@
 import { Chat } from './Chat';
-import { User, Presence, UserStatus } from "@chatscope/use-chat";
+import { Presence, UserStatus } from "@chatscope/use-chat";
 import { useState, useEffect } from "react";
 import Creatable from 'react-select/creatable';
 import { useSession, useThing, useDataset, LoginButton, LogoutButton, CombinedDataProvider, Image, Text } from "@inrupt/solid-ui-react";
@@ -10,6 +10,7 @@ import {
   getThing } from "@inrupt/solid-client";
 import { FOAF, VCARD } from "@inrupt/lit-generated-vocab-common";
 import { identityProviderOptions } from './solid-identityproviders';
+import { SolidChatUser } from '../SolidChatUser';
 
 export const SolidChatSession = () => {
 
@@ -23,7 +24,7 @@ export const SolidChatSession = () => {
       setCurrentUrl(window.location.href);
     }, [setCurrentUrl]);
    
-    const [ user, setUser ] = useState(new User({
+    const [ user, setUser ] = useState(new SolidChatUser ({
       id: webId,
       presence: new Presence({status: UserStatus.Available, description: ""}),
       firstName: "",
@@ -31,7 +32,9 @@ export const SolidChatSession = () => {
       username: "- retrieving user name -",
       email: "",
       avatar: "",
-      bio: ""
+      bio: "",
+      location: "",
+      age: 0
     }));
 
     const [ solidUserLoaded, setSolidUserLoaded] = useState(false);
@@ -46,7 +49,7 @@ export const SolidChatSession = () => {
           const username = firstName;
           const lastName = getStringNoLocale(profileThing!, FOAF.familyName.iriAsString) as string
           const avatar = getUrl(profileThing!, VCARD.hasPhoto.iriAsString) as string
-          const loadedUser = new User({
+          const loadedUser = new SolidChatUser({
             id: user.id,
             presence: user.presence,
             firstName: firstName,
@@ -54,7 +57,9 @@ export const SolidChatSession = () => {
             username: username,
             email: user.email,
             avatar: avatar,
-            bio: user.bio
+            bio: user.bio,
+            location: user.location,
+            age: user.age
           });
           setUser(loadedUser);
         });

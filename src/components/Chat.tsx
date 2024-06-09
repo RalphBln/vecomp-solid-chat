@@ -9,9 +9,10 @@ import {
     MessageDirection,
     MessageStatus
 } from "@chatscope/use-chat";
-import {MessageContent, TextContent, User} from "@chatscope/use-chat";
+import {MessageContent, TextContent } from "@chatscope/use-chat";
+import { SolidChatUser } from "../SolidChatUser";
 
-export const Chat = ({user}:{user:User}) => {
+export const Chat = ({user}:{user:SolidChatUser}) => {
     
     // Get all chat related values and methods from useChat hook 
     const {
@@ -141,7 +142,8 @@ export const Chat = ({user}:{user:User}) => {
 
                     return <Conversation key={c.id}
                                   name={name}
-                                  info={c.draft ? `Draft: ${c.draft.replace(/<br>/g,"\n").replace(/&nbsp;/g, " ")}` : ``}
+                                //   info={c.draft ? `Draft: ${c.draft.replace(/<br>/g,"\n").replace(/&nbsp;/g, " ")}` : ``}
+                                info={`${(getUser(c.participants[0].id) as SolidChatUser).age}, ${(getUser(c.participants[0].id) as SolidChatUser).location}`}
                                   active={activeConversation?.id === c.id}
                                   unreadCnt={c.unreadCounter}
                                   onClick={() => setActiveConversation(c.id)}>

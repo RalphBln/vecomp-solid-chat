@@ -14,7 +14,6 @@ import {
     Presence,
     TypingUsersList,
     UpdateState,
-    User,
     UserStatus
 } from "@chatscope/use-chat";
 import {ExampleChatService} from "@chatscope/use-chat/dist/examples";
@@ -25,6 +24,7 @@ import {AutoDraft} from "@chatscope/use-chat/dist/enums/AutoDraft";
 import {Footer} from "./components/Footer";
 import {SessionProvider} from "@inrupt/solid-ui-react";
 import {SolidChatSession} from "./components/SolidChatSession";
+import {SolidChatUser} from "./SolidChatUser";
 
 // sendMessage and addMessage methods can automagically generate id for messages and groups
 // This allows you to omit doing this manually, but you need to provide a message generator
@@ -43,7 +43,7 @@ const serviceFactory = (storage: IStorage, updateState: UpdateState) => {
     return new ExampleChatService(storage, updateState);
 };
 
-const akane = new User({
+const akane = new SolidChatUser({
     id: akaneModel.name,
     presence: new Presence({status: UserStatus.Available, description: ""}),
     firstName: "",
@@ -51,10 +51,12 @@ const akane = new User({
     username: akaneModel.name,
     email: "",
     avatar: akaneModel.avatar,
-    bio: ""
+    bio: "",
+    location: akaneModel.location,
+    age: akaneModel.age
 });
 
-const emily = new User({
+const emily = new SolidChatUser({
     id: emilyModel.name,
     presence: new Presence({status: UserStatus.Available, description: ""}),
     firstName: "",
@@ -62,10 +64,12 @@ const emily = new User({
     username: emilyModel.name,
     email: "",
     avatar: emilyModel.avatar,
-    bio: ""
+    bio: "",
+    location: emilyModel.location,
+    age: emilyModel.age
 });
 
-const eliot = new User({
+const eliot = new SolidChatUser({
     id: eliotModel.name,
     presence: new Presence({status: UserStatus.Available, description: ""}),
     firstName: "",
@@ -73,10 +77,12 @@ const eliot = new User({
     username: eliotModel.name,
     email: "",
     avatar: eliotModel.avatar,
-    bio: ""
+    bio: "",
+    location: eliotModel.location,
+    age: eliotModel.age
 });
 
-const joe = new User({
+const joe = new SolidChatUser({
     id: joeModel.name,
     presence: new Presence({status: UserStatus.Available, description: ""}),
     firstName: "",
@@ -84,7 +90,9 @@ const joe = new User({
     username: joeModel.name,
     email: "",
     avatar: joeModel.avatar,
-    bio: ""
+    bio: "",
+    location: joeModel.location,
+    age: joeModel.age
 });
 
 const chats = [
@@ -115,7 +123,7 @@ chats.forEach(c => {
 
     users.forEach(u => {
         if (u.name !== c.name) {
-            c.storage.addUser(new User({
+            c.storage.addUser(new SolidChatUser({
                 id: u.name,
                 presence: new Presence({status: UserStatus.Available, description: ""}),
                 firstName: "",
@@ -123,7 +131,9 @@ chats.forEach(c => {
                 username: u.name,
                 email: "",
                 avatar: u.avatar,
-                bio: ""
+                bio: "",
+                location: u.location,
+                age: u.age
             }));
 
             const conversationId = nanoid();

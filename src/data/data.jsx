@@ -5,22 +5,30 @@ import joeAvatar from "../assets/joe.svg";
 
 export const akaneModel = {
     name: "Akane",
-    avatar: akaneAvatar
+    avatar: akaneAvatar,
+    location: "Germany",
+    age: 15
 }; 
 
 export const eliotModel = {
     name: "Eliot",
-    avatar: eliotAvatar
+    avatar: eliotAvatar,
+    location: "Germany",
+    age: 28
 }; 
 
 export const emilyModel = {
     name: "Emily",
-    avatar: emilyAvatar
+    avatar: emilyAvatar,
+    location: "USA",
+    age: 12
 };
 
 export const joeModel = {
     name: "Joe",
-    avatar: joeAvatar
+    avatar: joeAvatar,
+    location: "USA",
+    age: 32
 }; 
 export const users = [
     akaneModel,
