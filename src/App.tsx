@@ -162,7 +162,7 @@ function App() {
                             debounceTyping: true,
                             autoDraft: AutoDraft.Save | AutoDraft.Restore
                         }}>
-                            <SolidChatSession user={akane}/>
+                            <SolidChatSession />
                         </ChatProvider>
         </div>
         </SessionProvider>
