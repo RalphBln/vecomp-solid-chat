@@ -16,6 +16,7 @@ import {
 import { FOAF, VCARD } from "@inrupt/lit-generated-vocab-common";
 import { identityProviderOptions } from './solid-identityproviders';
 import { SolidChatUser } from '../SolidChatUser';
+import Snackbar from '@mui/material/Snackbar';
 
 export const SolidChatSession = () => {
 
@@ -78,9 +79,23 @@ export const SolidChatSession = () => {
     }
 
     const updateLocation = async (location: string) => {
-      storeToSolidPod(setStringNoLocale(solidProfile!, VCARD.hasCountryName.iriAsString, location));
+      if (location !== user.location) {
+        storeToSolidPod(setStringNoLocale(solidProfile!, VCARD.hasCountryName.iriAsString, location));
+      }
     };
 
+    const [wrongUserDataMessage, setWrongUserDataErrorMessage] = useState("");
+    const [wrongUserDataMessageVisible, setWrongUserDataErrorMessageVisible] = useState(false);
+
+    const wrongAgeMessage = "Age must be a number.";
+    const checkAge = (age: string) => {
+      if (isNaN(Number(age))) {
+        setWrongUserDataErrorMessage(wrongAgeMessage);
+        setWrongUserDataErrorMessageVisible(true);
+        throw(wrongAgeMessage);
+      }
+    }
+    
     const  updateAge = async (age: string) => {
       storeToSolidPod(setStringNoLocale(solidProfile!, FOAF.age.iriAsString, age));
     };
@@ -104,8 +119,17 @@ export const SolidChatSession = () => {
               user={user}
               updateLocation={updateLocation}
               updateAge={updateAge}
+              checkAge={checkAge}
+              checkLocation={(location) => {}}
             />
             <LogoutButton />
+            <Snackbar
+              message={wrongUserDataMessage}
+              open={wrongUserDataMessageVisible}
+              autoHideDuration={5000}
+              anchorOrigin={{ vertical: "top", horizontal: "left" }}
+              onClose={() => { setWrongUserDataErrorMessageVisible(false) }}
+            />
             </CombinedDataProvider>
         ) : (
           <>

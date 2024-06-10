@@ -23,7 +23,10 @@
     "web-vitals": "^1.0.1",
     "@inrupt/solid-ui-react": "latest",
     "@inrupt/lit-generated-vocab-common": "latest",
-    "react-editable-label": "latest"
+    "react-editable-label": "latest",
+    "@mui/material": "latest",
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
