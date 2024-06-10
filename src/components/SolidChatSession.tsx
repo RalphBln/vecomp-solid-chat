@@ -8,6 +8,7 @@ import {
   setStringNoLocale,
   getUrl,
   getSolidDataset,
+  saveSolidDatasetAt,
   getThing,
   setThing,
   Thing,
@@ -86,7 +87,12 @@ export const SolidChatSession = () => {
 
     const storeToSolidPod = async (profile: Thing) => {
       setSolidProfile(profile);
-      setThing(dataset!, profile)
+      const updatedDataset = setThing(dataset!, profile);
+      console.log(`##### Sending updates to Solid Pod ${updatedDataset}`);
+      saveSolidDatasetAt(webId, updatedDataset, {fetch: session.fetch}).then(
+        (savedDataset) => setDataset(savedDataset),
+        (reason) => console.log(`Error on saving changes to Solid Pod: ${reason}`)
+      );
     };
 
     return (
