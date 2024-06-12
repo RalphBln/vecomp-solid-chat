@@ -26,7 +26,8 @@
     "react-editable-label": "latest",
     "@mui/material": "latest",
     "@emotion/react": "latest",
-    "@emotion/styled": "latest"
+    "@emotion/styled": "latest",
+    "cors": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
