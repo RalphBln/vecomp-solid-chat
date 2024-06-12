@@ -80,6 +80,7 @@ export const SolidChatSession = () => {
 
     const updateLocation = async (location: string) => {
       if (location !== user.location) {
+        user.location = location;
         storeToSolidPod(setStringNoLocale(solidProfile!, VCARD.hasCountryName.iriAsString, location));
       }
     };
@@ -96,8 +97,12 @@ export const SolidChatSession = () => {
       }
     }
     
-    const  updateAge = async (age: string) => {
-      storeToSolidPod(setStringNoLocale(solidProfile!, FOAF.age.iriAsString, age));
+    const updateAge = async (age: string) => {
+      const newAge = Number(age);
+      if (newAge !== user.age) {
+        user.age = newAge;
+        storeToSolidPod(setStringNoLocale(solidProfile!, FOAF.age.iriAsString, age));
+      }
     };
 
     const storeToSolidPod = async (profile: Thing) => {

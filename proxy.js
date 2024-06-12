@@ -8,8 +8,10 @@ var cors = require('cors')
 const app = express();
 app.use(cors());
 const { createProxyMiddleware } = require('http-proxy-middleware');
+
 app.use('/detect-hate-speech', createProxyMiddleware({ 
-    target: process.env.HATE_SPEECH_DETECTION_URL, //original url
+    target: process.env.HATE_SPEECH_DETECTION_ADDRESS, //original url
+    pathRewrite: {'^/detect-hate-speech' : process.env.HATE_SPEECH_DETECTION_PATH},
     headers: {
         'token': process.env.HATE_SPEECH_API_KEY
     },
@@ -19,4 +21,27 @@ app.use('/detect-hate-speech', createProxyMiddleware({
        proxyRes.headers['Access-Control-Allow-Origin'] = '*';
     }
 }));
-app.listen(process.env.HATE_SPEECH_PROXY_LOCAL_PORT);
+app.use('/generate-counter-speech', createProxyMiddleware({ 
+    target: process.env.HATE_SPEECH_MITIGATION_ADDRESS, //original url
+    pathRewrite: {'^/generate-counter-speech' : process.env.HATE_SPEECH_MITIGATION_PATH},
+    headers: {
+        'token': process.env.HATE_SPEECH_API_KEY
+    },
+    changeOrigin: true, 
+    //secure: false,
+    onProxyRes: function (proxyRes, req, res) {
+       proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+    }
+}));
+app.use('/legal-and-ethical-check', createProxyMiddleware({ 
+    target: process.env.LEGAL_AND_ETHICAL_CHECK_ADDRESS, //original url
+    pathRewrite: {'^/legal-and-ethical-check' : process.env.LEGAL_AND_ETHICAL_CHECK_PATH},
+    changeOrigin: true, 
+    //secure: false,
+    onProxyRes: function (proxyRes, req, res) {
+       proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+    }
+}));
+
+
+app.listen(process.env.REACT_APP_PROXY_PORT);
