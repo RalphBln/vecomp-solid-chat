@@ -1,6 +1,7 @@
 export const countryMappings: { [key: string]: CountryMapping } = {
     Germany: {
         origin: "German",
+        language: "German",
         age_of_majority: 18,
         hate_speech_title: "Dein Beitrag enthält offenbar Hassrede.",
         community_guidelines_violation: "Dein Beitrag verstößt gegen unsere Community-Richtlinien.",
@@ -8,6 +9,7 @@ export const countryMappings: { [key: string]: CountryMapping } = {
     },
     Greece: {
         origin: "Greek",
+        language: "Greek",
         age_of_majority: 18,
         hate_speech_title: "Η ανάρτησή σας φαίνεται να περιέχει ρητορική μίσους.",
         community_guidelines_violation: "Η ανάρτησή σας παραβιάζει τις οδηγίες της κοινότητάς μας.",
@@ -15,6 +17,7 @@ export const countryMappings: { [key: string]: CountryMapping } = {
     },
     France: {
         origin: "French",
+        language: "French",
         age_of_majority: 18,
         hate_speech_title: "Le contenu de votre message semble contenir des propos haineux.",
         community_guidelines_violation: "Votre message ne respecte pas notre règlement de la communauté.",
@@ -22,6 +25,7 @@ export const countryMappings: { [key: string]: CountryMapping } = {
     },
     USA : {
         origin: "American",
+        language: "English",
         age_of_majority: 18,
         hate_speech_title: "Your post appears to contain hate speech.",
         community_guidelines_violation: "Your post violates our community guidelines.",
@@ -31,6 +35,7 @@ export const countryMappings: { [key: string]: CountryMapping } = {
 
 type CountryMapping = {
     origin: string,
+    language: string,
     age_of_majority: number,
     hate_speech_title: string,
     community_guidelines_violation: string,

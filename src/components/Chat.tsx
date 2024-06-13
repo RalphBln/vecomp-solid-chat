@@ -172,6 +172,26 @@ export const Chat = ({
                 if (legalViolation !== undefined) {
                     setNationalLawViolationMessage((countryMappings[user.location] || countryMappings["USA"]).national_law_violation);
                 }
+
+                fetch(`http://localhost:${process.env.REACT_APP_PROXY_PORT}/generate-counter-speech`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        language: (countryMappings[user.location] || countryMappings["USA"]).national_law_violation,
+                        national_origin: (countryMappings[user.location] || countryMappings["USA"]).origin,
+                        text: text
+                    }),
+                    headers: {
+                        'Content-type': 'application/json; charset=UTF-8',
+                    },
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    setCounterSpeech(data["result"]);
+                })
+                .catch((err) => {
+                    console.log(err.message);
+                 });
+                
                 setCounterSpeechVisible(true);
             })
             .catch((err) => {
@@ -182,6 +202,13 @@ export const Chat = ({
             console.log(err.message);
          });
     }
+
+    const resetCounterSpeechPopup = () => {
+        setCounterSpeechVisible(false);
+        setNationalLawViolationMessage("");
+        setCommunityGuidelinesViolationMessage("");
+        setCounterSpeech("");
+    };
 
     const getTypingIndicator = useCallback(
         () => {
@@ -288,7 +315,7 @@ export const Chat = ({
         </ChatContainer>
         <Modal
             open={counterSpeechVisible}
-            onClose={() => setCounterSpeechVisible(false)}
+            onClose={resetCounterSpeechPopup}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
