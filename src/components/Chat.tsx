@@ -1,4 +1,4 @@
-import {useMemo, useCallback, useEffect} from "react";
+import {useMemo, useCallback, useEffect, useState} from "react";
 
 import { MainContainer, Sidebar, ConversationList, Conversation, Avatar, ChatContainer, ConversationHeader, MessageGroup, Message,MessageList, MessageInput, TypingIndicator } from "@chatscope/chat-ui-kit-react";
 
@@ -12,6 +12,24 @@ import {
 import {MessageContent, TextContent } from "@chatscope/use-chat";
 import { SolidChatUser } from "../SolidChatUser";
 import EditableLabel from './EditableLabel';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+
+import "../country-mappings";
+import { countryMappings } from "../country-mappings";
+
+const counterSpeechStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 800,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
 export const Chat = ({
     user,
@@ -72,6 +90,8 @@ export const Chat = ({
         }
         
     }
+
+    const [ counterSpeechVisible, setCounterSpeechVisible] = useState(false);
     
     const handleSend = (text:string) => {
 
@@ -95,6 +115,10 @@ export const Chat = ({
         }
 
     };
+
+    const [ nationalLawViolationMessage, setNationalLawViolationMessage] = useState("");
+    const [ communityGuidelinesViolationMessage, setCommunityGuidelinesViolationMessage] = useState("");
+    const [ counterSpeech, setCounterSpeech] = useState("");
 
     const checkHateSpeech = async (text:string) => {
         fetch(`http://localhost:${process.env.REACT_APP_PROXY_PORT}/detect-hate-speech`, {
@@ -134,7 +158,21 @@ export const Chat = ({
             }))
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                const response = data["response"];
+                if (response === "safe")
+                    return;
+
+                const ethicalViolation = response["ethical_violation"];
+                if (ethicalViolation !== undefined) {
+                    const score = ethicalViolation["score"];
+                    // todo we don't do anything with the score yet.
+                    setCommunityGuidelinesViolationMessage((countryMappings[user.location] || countryMappings["USA"]).community_guidelines_violation);
+                }
+                const legalViolation = response["legal_violation"];
+                if (legalViolation !== undefined) {
+                    setNationalLawViolationMessage((countryMappings[user.location] || countryMappings["USA"]).national_law_violation);
+                }
+                setCounterSpeechVisible(true);
             })
             .catch((err) => {
                 console.log(err.message);
@@ -143,9 +181,8 @@ export const Chat = ({
          .catch((err) => {
             console.log(err.message);
          });
-
     }
-    
+
     const getTypingIndicator = useCallback(
         () => {
             
@@ -249,7 +286,27 @@ export const Chat = ({
             </MessageList>
             <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..."/>
         </ChatContainer>
-        
+        <Modal
+            open={counterSpeechVisible}
+            onClose={() => setCounterSpeechVisible(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={counterSpeechStyle}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+                { (countryMappings[user.location] || countryMappings.USA).hate_speech_title }
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {communityGuidelinesViolationMessage}
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {nationalLawViolationMessage}
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {counterSpeech}
+            </Typography>
+            </Box>
+        </Modal>        
     </MainContainer>);
     
 }
