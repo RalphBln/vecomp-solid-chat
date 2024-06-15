@@ -1,0 +1,20 @@
+services:
+
+  vecomp-chat:
+    image: vecomp-chat:latest
+    container_name: vecomp-chat
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    ports:
+      - ${APP_PORT}:3000
+      - ${REACT_APP_PROXY_PORT}:9300
+
+  prova-hatespeech-servlet:
+    image: prova-hatespeech-servlet:latest
+    container_name: prova-hatespeech-servlet
+    ports:
+      - 8080:8080
