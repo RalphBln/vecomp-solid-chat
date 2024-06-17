@@ -10,6 +10,8 @@ const EditableLabel = ({
 	labelClass,
 	inputName,
 	inputId,
+	user,
+	getValue
 }) => {
 	const [view, setView] = useState('label');
 	const [value, setValue] = useState(initialValue);
@@ -21,6 +23,13 @@ const EditableLabel = ({
 			textInput.current.focus();
 		}
 	}, [view, textInput]);
+
+	useEffect(() => {
+		console.log("### Editable label: user updated");
+		if (view === 'label') {
+			setValue(getValue());
+		}
+	}, [user, view, getValue]);
 
 	const keyUp = (e) => {
 		if (disableKeys === true) {

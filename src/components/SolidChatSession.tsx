@@ -7,6 +7,7 @@ import {
   getStringNoLocale,
   setStringNoLocale,
   getUrl,
+  setUrl,
   getSolidDataset,
   saveSolidDatasetAt,
   getThing,
@@ -17,6 +18,7 @@ import { FOAF, VCARD } from "@inrupt/lit-generated-vocab-common";
 import { identityProviderOptions } from './solid-identityproviders';
 import { SolidChatUser } from '../SolidChatUser';
 import Snackbar from '@mui/material/Snackbar';
+import { UserDataEntry } from './UserDataEntry';
 
 export const SolidChatSession = () => {
 
@@ -46,6 +48,7 @@ export const SolidChatSession = () => {
     const [solidProfile, setSolidProfile] = useState<Thing>();
     const [dataset, setDataset] = useState<SolidDataset>();
     const [solidUserLoaded, setSolidUserLoaded] = useState(false);
+    const [dataMissingDialogOpen, setDataMissingDialogOpen] = useState(false);
 
     if (session.info.isLoggedIn) {
       if (!solidUserLoaded) {
@@ -61,6 +64,7 @@ export const SolidChatSession = () => {
           const avatar = getUrl(profileThing!, VCARD.hasPhoto.iriAsString) as string;
           const location = getStringNoLocale(profileThing!, VCARD.hasCountryName.iriAsString) as string;
           const age = Number(getStringNoLocale(profileThing!, FOAF.age.iriAsString) as string);
+
           const loadedUser = new SolidChatUser({
             id: user.id,
             presence: user.presence,
@@ -73,10 +77,27 @@ export const SolidChatSession = () => {
             location: location,
             age: age
           });
+
           setUser(loadedUser);
+          console.log("### avatar=" + avatar)
+
+          if (!(firstName && avatar && location && age)) {
+            setDataMissingDialogOpen(true);
+          }
         });
       }
     }
+
+    const userDataEntered = () => {
+      console.log("### User update: " + user.firstName);
+      setDataMissingDialogOpen(false);
+
+      var updatedProfileThing = setStringNoLocale(solidProfile!, FOAF.givenName.iriAsString, user.firstName);
+      updatedProfileThing = setStringNoLocale(updatedProfileThing!, FOAF.age.iriAsString, user.age.toString());
+      updatedProfileThing = setStringNoLocale(updatedProfileThing!, VCARD.hasCountryName.iriAsString, user.location);
+      updatedProfileThing = setUrl(updatedProfileThing!, VCARD.hasPhoto.iriAsString, user.avatar);
+      storeToSolidPod(updatedProfileThing);
+    };
 
     const updateLocation = async (location: string) => {
       if (location !== user.location) {
@@ -120,37 +141,48 @@ export const SolidChatSession = () => {
           <h1>Vecomp Chat</h1>
           {session.info.isLoggedIn ? (
             <CombinedDataProvider datasetUrl={webId} thingUrl={webId}>
-            <Chat
-              user={user}
-              updateLocation={updateLocation}
-              updateAge={updateAge}
-              checkAge={checkAge}
-              checkLocation={(location) => {}}
-            />
-            <LogoutButton />
-            <Snackbar
-              message={wrongUserDataMessage}
-              open={wrongUserDataMessageVisible}
-              autoHideDuration={5000}
-              anchorOrigin={{ vertical: "top", horizontal: "left" }}
-              onClose={() => { setWrongUserDataErrorMessageVisible(false) }}
-            />
+              <Chat
+                user={user}
+                updateLocation={updateLocation}
+                updateAge={updateAge}
+                checkAge={checkAge}
+                checkLocation={(location) => {}}
+              />
+              <div>Logged in as: {user.firstName}&nbsp;<LogoutButton /></div>
+              <Snackbar
+                message={wrongUserDataMessage}
+                open={wrongUserDataMessageVisible}
+                autoHideDuration={5000}
+                anchorOrigin={{ vertical: "top", horizontal: "left" }}
+                onClose={() => { setWrongUserDataErrorMessageVisible(false) }}
+              />
+              <UserDataEntry
+                open={dataMissingDialogOpen}
+                user={user}
+                dialogClosed={userDataEntered}
+              />
             </CombinedDataProvider>
         ) : (
-          <>
+          <div>
           Please select your identity provider (idp) and log in to (one of) your Solid Pod(s):
-              <Creatable
-                options={identityProviderOptions}
-                value={idp}
-                defaultValue={{ label: identityProviderOptions[0].label, value: identityProviderOptions[0].value }}
-                onChange={selection => setIdp(selection)} />
+            <Creatable
+              options={identityProviderOptions}
+              value={idp}
+              defaultValue={{ label: identityProviderOptions[0].label, value: identityProviderOptions[0].value }}
+              onChange={selection => setIdp(selection)} />
             <LoginButton
                 authOptions={{ clientName: "Vecomp Chat" }}
                 oidcIssuer={idp == null ? identityProviderOptions[0].value : idp.value}
                 redirectUrl={currentUrl}
                 onError={console.error}
             />
-          </>
+            <div>
+            <p/>
+            <p>
+              <a href={"https://solidproject.org/users/get-a-pod"}>Don't have a Solid Pod yet?</a>
+              </p>
+            </div>
+          </div>
         )}
         </>
       );

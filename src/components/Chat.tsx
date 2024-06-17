@@ -52,6 +52,7 @@ export const Chat = ({
     } = useChat();
     
     useEffect( () => {
+        console.log("### CHAT: Setting current user " + user.username);
         setCurrentUser(user);
     },[user, setCurrentUser]);
     
@@ -253,11 +254,15 @@ export const Chat = ({
                         initialValue={"" + user.age}
                         save={updateAge}
                         check={checkAge}
+                        user={user}
+                        getValue={() => user.age}
                     />,&nbsp;
                     <EditableLabel
                         initialValue={user.location}
                         save={updateLocation}
                         check={checkLocation}
+                        user={user}
+                        getValue={() => user.location}
                     />
                     </div>
                 </ConversationHeader.Content>
