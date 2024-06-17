@@ -164,17 +164,18 @@ chats.forEach(c => {
 function App() {
 
     return (
-        <SessionProvider>
-        <div className="h-100 d-flex flex-column overflow-hidden">
-                        <ChatProvider serviceFactory={serviceFactory} storage={akaneStorage} config={{
-                            typingThrottleTime: 250,
-                            typingDebounceTime: 900,
-                            debounceTyping: true,
-                            autoDraft: AutoDraft.Save | AutoDraft.Restore
-                        }}>
-                            <SolidChatSession />
-                        </ChatProvider>
-        </div>
+        <SessionProvider
+            restorePreviousSession>
+            <div className="h-100 d-flex flex-column overflow-hidden">
+                            <ChatProvider serviceFactory={serviceFactory} storage={akaneStorage} config={{
+                                typingThrottleTime: 250,
+                                typingDebounceTime: 900,
+                                debounceTyping: true,
+                                autoDraft: AutoDraft.Save | AutoDraft.Restore
+                            }}>
+                                <SolidChatSession />
+                            </ChatProvider>
+            </div>
         </SessionProvider>
     );
 }

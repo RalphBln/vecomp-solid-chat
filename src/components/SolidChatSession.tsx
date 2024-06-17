@@ -50,7 +50,7 @@ export const SolidChatSession = () => {
     const [solidUserLoaded, setSolidUserLoaded] = useState(false);
     const [dataMissingDialogOpen, setDataMissingDialogOpen] = useState(false);
 
-    if (session.info.isLoggedIn) {
+    if (session.info.isLoggedIn) {  
       if (!solidUserLoaded) {
         setSolidUserLoaded(true);
         console.log("##### Fetching user data from Solid");
@@ -179,7 +179,9 @@ export const SolidChatSession = () => {
             <div>
             <p/>
             <p>
-              <a href={"https://solidcommunity.net/register"}>Don't have a Solid Pod yet?</a>
+              <a
+                target={"getSolidPod"}
+                href={"https://solidcommunity.net/register"}>Don't have a Solid Pod yet?</a>
               </p>
             </div>
           </div>
