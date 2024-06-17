@@ -28,5 +28,5 @@ Make sure the docker image of the Prova legal and ethical checker is present in 
 Run the application:
 
 ```console
-$ docker-compose up
+$ docker-compose up -d
 ```
