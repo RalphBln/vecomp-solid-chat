@@ -179,7 +179,7 @@ export const SolidChatSession = () => {
             <div>
             <p/>
             <p>
-              <a href={"https://solidproject.org/users/get-a-pod"}>Don't have a Solid Pod yet?</a>
+              <a href={"https://solidcommunity.net/register"}>Don't have a Solid Pod yet?</a>
               </p>
             </div>
           </div>
