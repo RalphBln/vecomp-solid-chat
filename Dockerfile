@@ -18,4 +18,4 @@ COPY . ./
 EXPOSE 3000 9300
 
 # start app
-CMD ["/app/start.sh"]
+ENTRYPOINT ["/app/start.sh"]
