@@ -186,6 +186,10 @@ export const SolidChatSession = () => {
             </div>
           </div>
         )}
+        <br/>
+        Redirect URL: {currentUrl}<br/>
+        Session: {session.info.sessionId}<br/>
+        WebId: {session.info.webId}<br/>
         </>
       );
 }
