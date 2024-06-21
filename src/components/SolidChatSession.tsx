@@ -46,24 +46,17 @@ export const SolidChatSession = () => {
     }));
 
     const [solidProfile, setSolidProfile] = useState<Thing>();
-    const [dataset, setDataset] = useState<SolidDataset>();
     const [solidUserLoaded, setSolidUserLoaded] = useState(false);
     const [dataMissingDialogOpen, setDataMissingDialogOpen] = useState(false);
 
-    if (session.info.isLoggedIn) {  
       if (!solidUserLoaded) {
         setSolidUserLoaded(true);
-        console.log("##### Fetching user data from Solid");
-        getSolidDataset(webId, { fetch: session.fetch } ).then((profileDataset) => {
-          const profileThing = getThing(profileDataset, webId);
-          setDataset(profileDataset);
-          setSolidProfile(profileThing!);
-          const firstName = getStringNoLocale(profileThing!, FOAF.givenName.iriAsString) as string;
+          const firstName = "";
           const username = firstName;
-          const lastName = getStringNoLocale(profileThing!, FOAF.familyName.iriAsString) as string;
-          const avatar = getUrl(profileThing!, VCARD.hasPhoto.iriAsString) as string;
-          const location = getStringNoLocale(profileThing!, VCARD.hasCountryName.iriAsString) as string;
-          const age = Number(getStringNoLocale(profileThing!, FOAF.age.iriAsString) as string);
+          const lastName = "";
+          const avatar = "";
+          const location = "";
+          const age = 0;
 
           const loadedUser = new SolidChatUser({
             id: user.id,
@@ -84,9 +77,7 @@ export const SolidChatSession = () => {
           if (!(firstName && avatar && location && age)) {
             setDataMissingDialogOpen(true);
           }
-        });
       }
-    }
 
     const userDataEntered = () => {
       console.log("### User update: " + user.firstName);
@@ -128,19 +119,11 @@ export const SolidChatSession = () => {
 
     const storeToSolidPod = async (profile: Thing) => {
       setSolidProfile(profile);
-      const updatedDataset = setThing(dataset!, profile);
-      console.log(`##### Sending updates to Solid Pod ${updatedDataset}`);
-      saveSolidDatasetAt(webId, updatedDataset, {fetch: session.fetch}).then(
-        (savedDataset) => setDataset(savedDataset),
-        (reason) => console.log(`Error on saving changes to Solid Pod: ${reason}`)
-      );
     };
 
     return (
         <>
           <h1>Vecomp Chat</h1>
-          {session.info.isLoggedIn ? (
-            <CombinedDataProvider datasetUrl={webId} thingUrl={webId}>
               <Chat
                 user={user}
                 updateLocation={updateLocation}
@@ -148,7 +131,6 @@ export const SolidChatSession = () => {
                 checkAge={checkAge}
                 checkLocation={(location) => {}}
               />
-              <div>Logged in as: {user.firstName}&nbsp;<LogoutButton /></div>
               <Snackbar
                 message={wrongUserDataMessage}
                 open={wrongUserDataMessageVisible}
@@ -161,31 +143,6 @@ export const SolidChatSession = () => {
                 user={user}
                 dialogClosed={userDataEntered}
               />
-            </CombinedDataProvider>
-        ) : (
-          <div>
-          Please select your identity provider (idp) and log in to (one of) your Solid Pod(s):
-            <Creatable
-              options={identityProviderOptions}
-              value={idp}
-              defaultValue={{ label: identityProviderOptions[0].label, value: identityProviderOptions[0].value }}
-              onChange={selection => setIdp(selection)} />
-            <LoginButton
-                authOptions={{ clientName: "Vecomp Chat" }}
-                oidcIssuer={idp == null ? identityProviderOptions[0].value : idp.value}
-                redirectUrl={currentUrl}
-                onError={console.error}
-            />
-            <div>
-            <p/>
-            <p>
-              <a
-                target={"getSolidPod"}
-                href={"https://solidcommunity.net/register"}>Don't have a Solid Pod yet?</a>
-              </p>
-            </div>
-          </div>
-        )}
         </>
       );
 }
