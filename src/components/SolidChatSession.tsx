@@ -26,10 +26,10 @@ export const SolidChatSession = () => {
     const webId = session.info.webId!;
 
     const [idp, setIdp] = useState<({label:string, value:string}|null)>({ label: identityProviderOptions[0].label, value: identityProviderOptions[0].value });
-    const [currentUrl, setCurrentUrl] = useState(window.location.href);
+    const [currentUrl, setCurrentUrl] = useState(window.location.href.substring(0, window.location.href.indexOf("?")) || window.location.href);
   
     useEffect(() => {
-      setCurrentUrl(window.location.href);
+      setCurrentUrl(window.location.href.substring(0, window.location.href.indexOf("?")) || window.location.href);
     }, [setCurrentUrl]);
    
     const [ user, setUser ] = useState(new SolidChatUser ({
