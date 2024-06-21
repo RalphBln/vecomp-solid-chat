@@ -122,7 +122,7 @@ export const Chat = ({
     const [ counterSpeech, setCounterSpeech] = useState("");
 
     const checkHateSpeech = async (text:string) => {
-        fetch(`http://localhost:${process.env.REACT_APP_PROXY_PORT}/detect-hate-speech`, {
+        fetch(`http://${window.location.hostname}:${process.env.REACT_APP_PROXY_PORT}/detect-hate-speech`, {
             method: 'POST',
             body: JSON.stringify({
                 text: text
@@ -150,7 +150,7 @@ export const Chat = ({
                 hol: ${hol},
                 user_location: ${user.location.toLowerCase()}`);
 
-            fetch(`http://localhost:${process.env.REACT_APP_PROXY_PORT}/legal-and-ethical-check?` + new URLSearchParams({
+            fetch(`http://${window.location.hostname}:${process.env.REACT_APP_PROXY_PORT}/legal-and-ethical-check?` + new URLSearchParams({
                 hate_speech_score: data["level"],
                 user_age: user_age,
                 chat_context: chatContext,
@@ -174,7 +174,7 @@ export const Chat = ({
                     setNationalLawViolationMessage((countryMappings[user.location] || countryMappings["USA"]).national_law_violation);
                 }
 
-                fetch(`http://localhost:${process.env.REACT_APP_PROXY_PORT}/generate-counter-speech`, {
+                fetch(`http://${window.location.hostname}t:${process.env.REACT_APP_PROXY_PORT}/generate-counter-speech`, {
                     method: 'POST',
                     body: JSON.stringify({
                         language: (countryMappings[user.location] || countryMappings["USA"]).national_law_violation,
