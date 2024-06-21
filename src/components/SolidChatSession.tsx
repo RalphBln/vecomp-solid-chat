@@ -174,7 +174,7 @@ export const SolidChatSession = () => {
                 authOptions={{ clientName: "Vecomp Chat" }}
                 oidcIssuer={idp == null ? identityProviderOptions[0].value : idp.value}
                 redirectUrl={currentUrl}
-                onError={console.error}
+                onError={ (error) => { console.log(error)}}
             />
             <div>
             <p/>
